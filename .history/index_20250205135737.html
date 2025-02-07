@@ -17,7 +17,7 @@
     </div>
     <nav class="navbar">
       <ul>
-        <li><a href="#menu">Home</a></li>
+        <li><a href="#home">Home</a></li>
         <li><a href="#reservations">Reservations</a></li>
         <li><a href="#menu">Menu</a></li>
         <li><a href="#rooms">Rooms</a></li>
@@ -29,30 +29,32 @@
 
   
 
+
+  <!-- Hero Section -->
+  <section id="home" class="hero">
+    <h1>Welcome to Copper's Ivy</h1>
+    <p>Experience fine dining and lodging.</p>
+    <a href="#reservations" class="btn">Make a Reservation</a>
+  </section>
+
   <!-- Features Section -->
   <section class="features">
     <div class="feature">
-      <a href="#reservations" class="btn">Reserve a Table</a>
+      <h2>Reserve Your Table</h2>
+      <p>Book a table effortlessly with our online reservation system.</p>
+      <a href="#reservations" class="btn">Book Now</a>
     </div>
     <div class="feature">
-      <a href="#menu" class="btn">Order Online</a>
+      <h2>Order Online</h2>
+      <p>Enjoy your favorite dishes delivered to your door.</p>
+      <a href="#menu" class="btn">Order Now</a>
     </div>
     <div class="feature">
+      <h2>Book a Room</h2>
+      <p>Experience luxury lodging at Copper’s Ivy.</p>
       <a href="#rooms" class="btn">Book a Room</a>
     </div>
   </section>
-
-  <!-- Menu Section -->
-  <section id="menu">
-    <h1>Coppers Ivy Menu</h1>
-    <div class="menu-items">
-      <!-- Menu items dynamically loaded -->
-    </div>
-  </section>
-
-
-  
-  
 
 
   
@@ -74,7 +76,7 @@
         <label for="customer-name">Name:</label>
         <input type="text" id="customer-name" required>
 
-        <label for="contact-info">Email:</label>
+        <label for="contact-info">Contact Info (Email or Phone):</label>
         <input type="text" id="contact-info" required>
 
         <label for="special-requests">Special Requests:</label>
@@ -97,7 +99,13 @@
 </section>
 
 
- 
+  <!-- Menu Section -->
+  <section id="menu">
+    <h1>Our Menu</h1>
+    <div class="menu-items">
+      <!-- Menu items dynamically loaded -->
+    </div>
+  </section>
 
     <!-- Order Section -->
     <section id="order-online">
@@ -176,13 +184,18 @@
   <section id="contact">
     <h1>Contact Us</h1>
     <p>Reach out to us with any inquiries or feedback.</p>
-    <form action="https://formsubmit.co/abe6aa3a3e17f53c98754b49282f4908" method="POST" class="contact-form" >
-      <input type="text" name="name" placeholder="Your Name" required>
-      <input type="email" name="email" placeholder="Your Email" required>
-      <textarea name="message" placeholder="Your Message" required></textarea>
-      <button type="submit">Send</button>
-  </form>
-  
+    <form class="contact-form">
+      <label for="name">Name:</label>
+      <input type="text" id="name" required>
+
+      <label for="email">Email:</label>
+      <input type="email" id="email" required>
+
+      <label for="message">Message:</label>
+      <textarea id="message" required></textarea>
+
+      <button type="submit" class="btn">Send Message</button>
+    </form>
   </section>
 
   <!-- Footer -->

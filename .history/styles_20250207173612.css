@@ -52,59 +52,79 @@ header nav ul li a:hover {
     color: #eb2630;
 }
 
+/* Hero Section */
+.hero {
+    background: url('assets/cookingbackground.jpg') no-repeat center center/cover;
+    text-align: center;
+    padding: 100px 20px;
+    color: #fff;
+    font-size: 28px;
+}
 
-
-
-/* Container for Features Section */
-.features {
-    display: flex;
-    justify-content: flex-start;
-    align-items: flex-start;
-    flex-direction: row;  /* This will place the features next to each other */
-    gap: 20px;  /* Adds space between each feature box */
-    margin-left: 20px;  /* Adjust the space from the left */
-  }
-  
-  /* Individual Feature Box */
-  .feature {
-    background-color: #fff;
-    padding: 20px;
+.hero h1 {
+    font-size: 36px;
     margin-bottom: 15px;
-    margin-top: 15px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    border-radius: 10px;
-    flex: 1;  /* Makes each feature box take equal width */
-  }
-  
-  /* Feature Header */
-  .feature h2 {
-    font-size: 22px;
-    margin-bottom: 10px;
-  }
-  
-  /* Feature Description */
-  .feature p {
-    font-size: 16px;
-    color: white;
-  }
-  
-  /* Optional: Adjusting feature links */
-  .feature a {
-    display: inline-block;
+}
+
+.hero p {
+    font-size: 20px;
+    margin-bottom: 20px;
+}
+
+.hero .btn {
+    padding: 12px 30px;
     background-color: #1f8c47;
     color: #fff;
-    padding: 10px 20px;
-    border-radius: 5px;
     text-decoration: none;
+    font-weight: bold;
+    border-radius: 5px;
     transition: background-color 0.3s;
-  }
-  
-  .feature a:hover {
-    background-color: #27ae60;
-  }
-  
+}
 
+.hero .btn:hover {
+    background-color: #07e262;
+}
 
+/* Features Section */
+.features {
+    display: flex;
+    justify-content: space-around;
+    margin: 50px 20px;
+}
+
+.feature {
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+    padding: 30px;
+    text-align: center;
+    flex: 1;
+    margin: 10px;
+}
+
+.feature h2 {
+    font-size: 24px;
+    margin-bottom: 10px;
+}
+
+.feature p {
+    font-size: 16px;
+    margin-bottom: 20px;
+}
+
+.feature .btn {
+    background-color: #1f8c47;
+    color: #fff;
+    text-decoration: none;
+    padding: 10px 25px;
+    font-weight: bold;
+    border-radius: 5px;
+    transition: background-color 0.3s;
+}
+
+.feature .btn:hover {
+    background-color: #10ce5f;
+}
 
 /* Reservations Section */
 #reservations {
@@ -187,8 +207,6 @@ header nav ul li a:hover {
     color: #fff;
 }
 
-
-
 /* Menu Section */
 #menu {
     padding: 50px 20px;
@@ -224,22 +242,8 @@ header nav ul li a:hover {
     border-radius: 5px;
 }
 
-/* Targeting buttons inside the #menu section */
-#menu button {
-    width: 100%;
-    padding: 12px;
-    background: #1f8c47;
-    color: white;
-    font-size: 16px;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: 0.3s;
-}
 
-#menu button:hover {
-    background: #27ae60;
-}
+
 
 
 /* Footer */
@@ -401,7 +405,7 @@ footer {
 }
 
 .room-card button {
-    background-color: #1f8c47;
+    background-color: #6c5ce7;
     color: white;
     padding: 10px 15px;
     font-size: 1rem;
@@ -412,7 +416,7 @@ footer {
 }
 
 .room-card button:hover {
-    background-color: #07e262;
+    background-color: #4834d4;
 }
 
 
@@ -460,7 +464,7 @@ footer {
 }
 
 .booking-form button {
-    background-color: #1f8c47;
+    background-color: #6c5ce7;
     color: white;
     padding: 12px 20px;
     font-size: 1.1rem;
@@ -471,7 +475,7 @@ footer {
 }
 
 .booking-form button:hover {
-    background-color: #27ae60;
+    background-color:#4834d4 ;
 }
 
 /* Confirmation Message */
@@ -546,6 +550,8 @@ footer {
     color: black; /* Sets the text to black */
     font-weight: lighter; /* Reduces the font weight */
 }
+
+
 
 
 

@@ -52,7 +52,38 @@ header nav ul li a:hover {
     color: #eb2630;
 }
 
+/* Hero Section */
+.hero {
+    background-color: #fff;
+    text-align: center;
+    padding: 100px 20px;
+    color: #da0606;
+    font-size: 28px;
+}
 
+.hero h1 {
+    font-size: 36px;
+    margin-bottom: 15px;
+}
+
+.hero p {
+    font-size: 20px;
+    margin-bottom: 20px;
+}
+
+.hero .btn {
+    padding: 12px 30px;
+    background-color: #1f8c47;
+    color: #fff;
+    text-decoration: none;
+    font-weight: bold;
+    border-radius: 5px;
+    transition: background-color 0.3s;
+}
+
+.hero .btn:hover {
+    background-color: #07e262;
+}
 
 
 /* Container for Features Section */
@@ -63,14 +94,16 @@ header nav ul li a:hover {
     flex-direction: row;  /* This will place the features next to each other */
     gap: 20px;  /* Adds space between each feature box */
     margin-left: 20px;  /* Adjust the space from the left */
+    background-color: #6c5ce7;  /* Greenish background */
+    padding: 20px;
+    border-radius: 10px;
   }
   
   /* Individual Feature Box */
   .feature {
     background-color: #fff;
     padding: 20px;
-    margin-bottom: 15px;
-    margin-top: 15px;
+    margin-bottom: 20px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     border-radius: 10px;
     flex: 1;  /* Makes each feature box take equal width */
@@ -85,14 +118,14 @@ header nav ul li a:hover {
   /* Feature Description */
   .feature p {
     font-size: 16px;
-    color: white;
+    color: #555;
   }
   
   /* Optional: Adjusting feature links */
   .feature a {
     display: inline-block;
-    background-color: #1f8c47;
-    color: #fff;
+    background-color: #6c5ce7;
+    color: white;
     padding: 10px 20px;
     border-radius: 5px;
     text-decoration: none;
@@ -100,10 +133,9 @@ header nav ul li a:hover {
   }
   
   .feature a:hover {
-    background-color: #27ae60;
+    background-color: #4834d4;
   }
   
-
 
 
 /* Reservations Section */
@@ -471,7 +503,7 @@ footer {
 }
 
 .booking-form button:hover {
-    background-color: #27ae60;
+    background-color: #07e262;
 }
 
 /* Confirmation Message */

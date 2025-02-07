@@ -85,7 +85,7 @@ header nav ul li a:hover {
   /* Feature Description */
   .feature p {
     font-size: 16px;
-    color: white;
+    color: #555;
   }
   
   /* Optional: Adjusting feature links */
@@ -471,7 +471,7 @@ footer {
 }
 
 .booking-form button:hover {
-    background-color: #27ae60;
+    background-color: #07e262;
 }
 
 /* Confirmation Message */

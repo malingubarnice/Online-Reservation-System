@@ -40,8 +40,7 @@ $UserPhoneNumber = mysqli_real_escape_string($db, $data->Body->stkCallback->Call
 // Check if the transaction was successful
 if ($ResultCode == 0) {
     // Prepare the SQL query
-    $query = "INSERT INTO transactions (MerchantRequestID, CheckoutRequestID, ResultCode, Amount, MpesaReceiptNumber, PhoneNumber) 
-              VALUES ('$MerchantRequestID', '$CheckoutRequestID', '$ResultCode', '$Amount', '$TransactionId', '$UserPhoneNumber')";
+    
     
     // Execute the query and check for errors
     if (mysqli_query($db, $query)) {
