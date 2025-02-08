@@ -143,7 +143,7 @@ header nav ul li a:hover {
     border-radius: 5px;
     font-size: 16px;
     transition: border-color 0.3s;
-    width: 90%;
+    width: 100%;
 }
 
 .reservation-form input:focus,
@@ -434,7 +434,7 @@ footer {
     padding: 20px;
     border-radius: 8px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    width: 70%;
+    width: 100%;
     max-width: 600px;
     margin: 0 auto;
 }

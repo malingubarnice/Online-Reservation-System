@@ -61,32 +61,32 @@
 <section id="reservations">
     <h1>Make a Reservation</h1>
     <div class="reservation-form">
-      <form action="send.php" method="post">
+        <form action="send.php" method="post">
         <label for="date">Select Date:</label>
-        <input type="date" id="date" name="date" required>
-    
+        <input type="date" id="date" required>
+        
         <label for="time">Select Time:</label>
-        <input type="time" id="time" name="time" required>
-    
+        <input type="time" id="time" required>
+
         <label for="party-size">Party Size:</label>
-        <input type="number" id="party-size" name="party-size" min="1" max="20" required>
-    
+        <input type="number" id="party-size" min="1" max="20" required>
+
+        <!-- New fields for contact info and special requests -->
         <label for="customer-name">Name:</label>
-        <input type="text" id="customer-name" name="customer-name" required>
-    
+        <input type="text" id="customer-name" required>
+
         <label for="contact-info">Email:</label>
-        <input type="text" id="contact-info" name="contact-info" required>
-    
+        <input type="text" id="contact-info" required>
+
         <label for="special-requests">Special Requests:</label>
-        <textarea id="special-requests" name="special-requests"></textarea>
-    
+        <textarea id="special-requests"></textarea>
+
+        <!-- New field to show selected table -->
         <label for="selected-table">Select Table:</label>
-        <input type="text" id="selected-table" name="selected-table" disabled>
-    
-        <button type="submit" class="reserve-btn">Check Availability</button>
-    </form>
-    
-    
+        <input type="text" id="selected-table" disabled> <!-- Hidden field to store the selected table -->
+
+        <button class="reserve-btn">Check Availability</button>
+        </form>
     </div>
 
     <!-- Table Layout Section -->
@@ -145,11 +145,9 @@
   <!--A Booking Form-->
 <!-- Booking form (initially hidden) -->
 
-<div class="reservation-form">
-  <form action="send_room.php" method="post">
-      <!-- Hidden input for room ID -->
-      <input type="hidden" id="room_id" name="room_id">
-      
+<div class="booking-form hidden">
+  <form id="room-booking-form">
+      <input type="hidden" id="room_id" name="room_id">  <!-- Hidden input for room ID -->
       <label for="room-selection">Room</label>
       <input type="text" id="room-selection" name="room_name" readonly>
 
@@ -165,11 +163,9 @@
       <label for="contact-info">Contact Information</label>
       <input type="text" id="contact-info" name="contact-info" placeholder="Enter your contact info" required>
 
-      <p id="price-display"></p>
-      <input type="hidden" id="price" name="price">
+      <p id="price"></p>
 
-
-      <button type="submit" class="reserve-btn">Book Room</button>
+      <button type="submit">Book Room</button>
   </form>
 </div>
 
@@ -235,17 +231,8 @@
     });
   </script>
 
-
-
   
-
-
-
-
-
-
-
-        
+      
 
   <script src="script.js"></script>
 </body>

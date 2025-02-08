@@ -237,7 +237,26 @@
 
 
 
-  
+  <script>
+    document.getElementById("room-selection").addEventListener("change", function() {
+    var roomName = this.value;
+    var price = 0;
+
+    // Define prices based on room type
+    if (roomName === "Deluxe") {
+        price = 10000;
+    } else if (roomName === "Executive") {
+        price = 22000;
+    } else if (roomName === "Standard") {
+        price = 9000;
+    }
+
+    // Set price in the hidden input field and display it on the page
+    document.getElementById("price").value = price;
+    document.getElementById("price-display").innerText = "Price: " + price;
+});
+
+  </script>
 
 
 

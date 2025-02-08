@@ -86,7 +86,6 @@
         <button type="submit" class="reserve-btn">Check Availability</button>
     </form>
     
-    
     </div>
 
     <!-- Table Layout Section -->
@@ -145,11 +144,9 @@
   <!--A Booking Form-->
 <!-- Booking form (initially hidden) -->
 
-<div class="reservation-form">
-  <form action="send_room.php" method="post">
-      <!-- Hidden input for room ID -->
-      <input type="hidden" id="room_id" name="room_id">
-      
+<div class="booking-form hidden">
+  <form id="room-booking-form">
+      <input type="hidden" id="room_id" name="room_id">  <!-- Hidden input for room ID -->
       <label for="room-selection">Room</label>
       <input type="text" id="room-selection" name="room_name" readonly>
 
@@ -165,11 +162,9 @@
       <label for="contact-info">Contact Information</label>
       <input type="text" id="contact-info" name="contact-info" placeholder="Enter your contact info" required>
 
-      <p id="price-display"></p>
-      <input type="hidden" id="price" name="price">
+      <p id="price"></p>
 
-
-      <button type="submit" class="reserve-btn">Book Room</button>
+      <button type="submit">Book Room</button>
   </form>
 </div>
 
@@ -235,17 +230,8 @@
     });
   </script>
 
-
-
   
-
-
-
-
-
-
-
-        
+      
 
   <script src="script.js"></script>
 </body>
