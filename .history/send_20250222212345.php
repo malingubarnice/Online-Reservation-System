@@ -6,7 +6,7 @@ require 'phpmailer/src/Exception.php';
 require 'phpmailer/src/PHPMailer.php';
 require 'phpmailer/src/SMTP.php';
 
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
+function sendReservationEmail($contact_info, $customer_name, $date, $time, $party_size, $special_requests) {
     $mail = new PHPMailer(true);
 
     try {
@@ -23,7 +23,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $mail->setFrom('malingubarnice@gmail.com', 'Coppers Ivy Reservation Team');
 
         // Recipient (Sanitize email input)
-        $customerEmail = filter_var($_POST["contact-info"], FILTER_SANITIZE_EMAIL);
+        $customerEmail = filter_var($contact_info, FILTER_SANITIZE_EMAIL);
         if (!filter_var($customerEmail, FILTER_VALIDATE_EMAIL)) {
             throw new Exception("Invalid email format.");
         }
@@ -32,11 +32,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         // Construct email content
         $message = "
          <h2>Reservation Confirmation</h2>
-         <p><strong>Name:</strong> " . htmlspecialchars($_POST["customer-name"]) . "</p>
-         <p><strong>Date:</strong> " . htmlspecialchars($_POST["date"]) . "</p>
-         <p><strong>Time:</strong> " . htmlspecialchars($_POST["time"]) . "</p>
-         <p><strong>Party Size:</strong> " . htmlspecialchars($_POST["party-size"]) . "</p>
-         <p><strong>Special Requests:</strong> " . nl2br(htmlspecialchars($_POST["special-requests"])) . "</p>
+         <p><strong>Name:</strong> " . htmlspecialchars($customer_name) . "</p>
+         <p><strong>Date:</strong> " . htmlspecialchars($date) . "</p>
+         <p><strong>Time:</strong> " . htmlspecialchars($time) . "</p>
+         <p><strong>Party Size:</strong> " . htmlspecialchars($party_size) . "</p>
+         <p><strong>Special Requests:</strong> " . nl2br(htmlspecialchars($special_requests)) . "</p>
          <p>Thank you for reserving with Coppers Ivy!</p>
          ";
 
@@ -47,15 +47,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         // Send email
         $mail->send();
-
-        echo "
-        <script> 
-        alert('Reservation request sent successfully!');
-        document.location.href = 'index.html';
-        </script>
-        ";
+        return true; // Email sent successfully
     } catch (Exception $e) {
-        echo "Message could not be sent. Mailer Error: {$mail->ErrorInfo}";
+        error_log("Email sending failed: " . $e->getMessage());
+        return false; // Email sending failed
     }
 }
 ?>

@@ -37,6 +37,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
          <p><strong>Time:</strong> " . htmlspecialchars($_POST["time"]) . "</p>
          <p><strong>Party Size:</strong> " . htmlspecialchars($_POST["party-size"]) . "</p>
          <p><strong>Special Requests:</strong> " . nl2br(htmlspecialchars($_POST["special-requests"])) . "</p>
+         <p><strong>Selected Table:</strong> " . htmlspecialchars($_POST["selected-table"]) . "</p>
          <p>Thank you for reserving with Coppers Ivy!</p>
          ";
 

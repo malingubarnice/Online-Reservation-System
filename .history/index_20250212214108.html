@@ -77,8 +77,7 @@
     <div class="reservation-form">
       <form action="send.php" method="post">
         <label for="date">Select Date:</label>
-        <input type="date" id="date" name="date" required min="<?php echo date('Y-m-d'); ?>">
-
+        <input type="date" id="date" name="date" required>
     
         <label for="time">Select Time:</label>
         <input type="time" id="time" name="time" required>
@@ -221,30 +220,6 @@
     <p>&copy; 2024 Copper's Ivy. All Rights Reserved.</p>
   </footer>
 
-
-
-
-  <script>
-    document.addEventListener("DOMContentLoaded", function () {
-        let today = new Date().toISOString().split("T")[0];
-  
-        // Set min date for reservations
-        document.getElementById("date").setAttribute("min", today);
-  
-        // Set min date for room bookings
-        document.getElementById("check-in-date").setAttribute("min", today);
-  
-        // Update checkout date when check-in date is selected
-        document.getElementById("check-in-date").addEventListener("change", function () {
-            let checkInDate = this.value;
-            document.getElementById("check-out-date").setAttribute("min", checkInDate);
-        });
-    });
-  </script>
-
-
-
-
   
   <script src="https://cdn.botpress.cloud/webchat/v2.2/inject.js"></script>
   <script src="https://files.bpcontent.cloud/2024/12/05/06/20241205062412-612LYK8G.js"></script>
@@ -252,7 +227,7 @@
   <!-- External JavaScript -->
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   <script>
-  $(document).ready(function () {
+   $(document).ready(function () {
     // Initialize Map
     let map = L.map('map').setView([-1.286389, 36.817223], 12);
 
@@ -339,7 +314,7 @@
         let totalAmount = totalItemsCost + totalDeliveryCost;
 
         // Show the total amount in the alert
-        alert(`Your Delivery cost is: Ksh ${totalDeliveryCost.toFixed(2)}`);
+        alert(`Your total cost is Ksh ${totalAmount.toFixed(2)} (Items: Ksh ${totalItemsCost.toFixed(2)} + Delivery: Ksh ${totalDeliveryCost.toFixed(2)}).`);
 
         // Send AJAX request to PHP for triggering STK Push
         $.ajax({

@@ -77,8 +77,7 @@
     <div class="reservation-form">
       <form action="send.php" method="post">
         <label for="date">Select Date:</label>
-        <input type="date" id="date" name="date" required min="<?php echo date('Y-m-d'); ?>">
-
+        <input type="date" id="date" name="date" required>
     
         <label for="time">Select Time:</label>
         <input type="time" id="time" name="time" required>
@@ -221,30 +220,6 @@
     <p>&copy; 2024 Copper's Ivy. All Rights Reserved.</p>
   </footer>
 
-
-
-
-  <script>
-    document.addEventListener("DOMContentLoaded", function () {
-        let today = new Date().toISOString().split("T")[0];
-  
-        // Set min date for reservations
-        document.getElementById("date").setAttribute("min", today);
-  
-        // Set min date for room bookings
-        document.getElementById("check-in-date").setAttribute("min", today);
-  
-        // Update checkout date when check-in date is selected
-        document.getElementById("check-in-date").addEventListener("change", function () {
-            let checkInDate = this.value;
-            document.getElementById("check-out-date").setAttribute("min", checkInDate);
-        });
-    });
-  </script>
-
-
-
-
   
   <script src="https://cdn.botpress.cloud/webchat/v2.2/inject.js"></script>
   <script src="https://files.bpcontent.cloud/2024/12/05/06/20241205062412-612LYK8G.js"></script>
@@ -252,7 +227,7 @@
   <!-- External JavaScript -->
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   <script>
-  $(document).ready(function () {
+   $(document).ready(function () {
     // Initialize Map
     let map = L.map('map').setView([-1.286389, 36.817223], 12);
 
@@ -266,14 +241,14 @@
 
     // Function to calculate distance and cost
     function getDistance(lat1, lon1, lat2, lon2) {
-        const R = 6371;
+        const R = 6371;  // Radius of the Earth in km
         const dLat = (lat2 - lat1) * Math.PI / 180;
         const dLon = (lon2 - lon1) * Math.PI / 180;
         const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
                   Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
                   Math.sin(dLon / 2) * Math.sin(dLon / 2);
         const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-        return R * c;
+        return R * c;  // Distance in km
     }
 
     function updateDeliveryCost(lat, lon) {
@@ -282,6 +257,7 @@
 
         $("#distance").text(`${distance} km`);
         $("#delivery-cost").text(`Ksh ${cost}`);
+        updateCartTotal();  // Update cart with new delivery cost
     }
 
     function updateLocationText(lat, lon) {
@@ -314,34 +290,62 @@
         updateLocationText(lat, lon);
     });
 
-    // Handle STK Push on "Place Order" button click
+    // Handle menu items and order management
+    let cart = [];  // Array to store the cart items
+
+    // Add item to the cart
+    $(".add-to-order-btn").click(function(event) {
+        const id = $(this).data("id");
+        const name = $(this).data("name");
+        const price = parseFloat($(this).data("price"));
+
+        if (!isNaN(price)) {
+            cart.push({ id, name, price });
+            updateCartDisplay();
+        } else {
+            console.error('Invalid price value:', price);
+        }
+    });
+
+    // Function to update cart display
+    function updateCartDisplay() {
+        const cartContainer = $(".order-list");
+        cartContainer.empty();  // Clear cart display
+        let total = 0;
+
+        cart.forEach(item => {
+            cartContainer.append(`<div class="cart-item"><p>${item.name} - KSh ${item.price.toFixed(2)}</p></div>`);
+            total += item.price;
+        });
+
+        const deliveryCost = parseFloat($("#delivery-cost").text().replace("Ksh ", "")) || 0;
+        total += deliveryCost;
+
+        $(".order-list").append(`<div class="total-price"><p>Total: KSh ${total.toFixed(2)}</p></div>`);
+    }
+
+    // Function to handle "Place Order" button click
     $(".place-order-btn").click(function () {
-        var phone = $("#phone").val();
-        
-        // Validate the phone number input
+        if (cart.length === 0) {
+            alert("Please add items to your order.");
+            return;
+        }
+
+        const phone = $("#phone").val();
         if (!phone || phone.length !== 12 || !phone.startsWith('254')) {
             alert("Please enter a valid phone number starting with '254'.");
             return;
         }
 
-        // Get the total cost of the selected items
+        // Calculate the total cost including items and delivery
         let totalItemsCost = 0;
-        $(".order-list .item").each(function() {
-            let itemPrice = $(this).data("price");  // Assuming each item has a 'data-price' attribute
-            totalItemsCost += parseFloat(itemPrice) || 0;  // Add the price of each item
-        });
-
-        // Get the delivery cost
-        let totalDeliveryCost = $("#delivery-cost").text().replace("Ksh ", "");
-        totalDeliveryCost = parseFloat(totalDeliveryCost) || 0;  // Default to 0 if delivery cost isn't determined yet
-
-        // Calculate total amount to pay (items cost + delivery cost)
+        cart.forEach(item => totalItemsCost += item.price);
+        let totalDeliveryCost = parseFloat($("#delivery-cost").text().replace("Ksh ", "")) || 0;
         let totalAmount = totalItemsCost + totalDeliveryCost;
 
-        // Show the total amount in the alert
-        alert(`Your Delivery cost is: Ksh ${totalDeliveryCost.toFixed(2)}`);
+        alert(`Your total cost is Ksh ${totalAmount.toFixed(2)} (Items: Ksh ${totalItemsCost.toFixed(2)} + Delivery: Ksh ${totalDeliveryCost.toFixed(2)}).`);
 
-        // Send AJAX request to PHP for triggering STK Push
+        // Send AJAX request for STK Push
         $.ajax({
             url: 'stkpush.php',
             type: 'POST',

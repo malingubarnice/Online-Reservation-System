@@ -3,14 +3,14 @@
 $servername = "localhost";
 $username = "root";
 $password = "";
-$dbname = "coppers_ivy"; // Database name
+$dbname = "coppers_ivy"; // My database
 
 // Create connection
 $conn = new mysqli($servername, $username, $password, $dbname);
 
 // Check connection
 if ($conn->connect_error) {
-    die(json_encode(['status' => 'error', 'message' => 'Database connection failed: ' . $conn->connect_error]));
+    die("Connection failed: " . $conn->connect_error);
 }
 
 // Set content type to JSON
@@ -22,30 +22,25 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     // Handle reservation creation
     if ($action === 'reserve') {
-        // Validate and sanitize inputs
-        $date = $_POST['date'] ?? '';
-        $time = $_POST['time'] ?? '';
-        $party_size = $_POST['party_size'] ?? '';
-        $contact_info = $_POST['contact_info'] ?? '';
-        $special_requests = $_POST['special_requests'] ?? '';
-        $selected_table = $_POST['selected_table'] ?? '';
+        $date = $_POST['date'];
+        $time = $_POST['time'];
+        $party_size = $_POST['party_size'];
+        $contact_info = $_POST['contact_info'];
+        $special_requests = $_POST['special_requests'];
+        $selected_table = $_POST['selected_table'];
 
-        // Ensure all fields are filled
+        // Simple validation (ensure all fields are filled)
         if (empty($date) || empty($time) || empty($party_size) || empty($contact_info) || empty($selected_table)) {
             echo json_encode(['status' => 'error', 'message' => 'All fields are required.']);
-            exit;
+            exit; // Stop script execution
         }
 
-        // Convert user input time to 12-hour format
-if (!empty($time)) {
-    $formatted_time = date("h:i A", strtotime($time)); // 12-hour format with AM/PM
-    if ($formatted_time === "12:00 AM") {
-        die(json_encode(['status' => 'error', 'message' => 'Invalid time format.']));
-    }
-} else {
-    die(json_encode(['status' => 'error', 'message' => 'Time is required.']));
-}
-
+        // Prevent selecting past dates
+        $currentDate = date('Y-m-d');
+        if ($date < $currentDate) {
+            echo json_encode(['status' => 'error', 'message' => 'Invalid date! You cannot select a past date.']);
+            exit; // Stop script execution immediately
+        }
 
         // Check if the table is already reserved
         $sql_check = "SELECT * FROM reservations WHERE date = ? AND time = ? AND table_number = ?";
@@ -56,42 +51,43 @@ if (!empty($time)) {
 
         if ($result_check->num_rows > 0) {
             echo json_encode(['status' => 'error', 'message' => 'This table is already reserved for the selected date and time.']);
-            exit;
+            exit; // Stop script execution immediately
         }
 
-        // Generate a unique reservation ID
-        $reservation_id = "RES-" . date("Ymd") . "-" . rand(100, 999);
-
-        // Insert reservation into the database
-        $sql_insert = "INSERT INTO reservations (reservation_id, date, time, party_size, contact_info, special_requests, table_number) 
-                       VALUES (?, ?, ?, ?, ?, ?, ?)";
+        // If all validations pass, insert the reservation into the database
+        $sql_insert = "INSERT INTO reservations (date, time, party_size, contact_info, special_requests, table_number) 
+                       VALUES (?, ?, ?, ?, ?, ?)";
         $stmt_insert = $conn->prepare($sql_insert);
-        $stmt_insert->bind_param("ssissss", $reservation_id, $date, $time, $party_size, $contact_info, $special_requests, $selected_table);
+        $stmt_insert->bind_param("ssssss", $date, $time, $party_size, $contact_info, $special_requests, $selected_table);
 
         if ($stmt_insert->execute()) {
-            // Send confirmation email
+            // ✅ Only send email after a successful reservation
             require 'send.php';
+
             $_POST['contact-info'] = $contact_info;
             $_POST['customer-name'] = 'Valued Customer';
             $_POST['date'] = $date;
             $_POST['time'] = $time;
             $_POST['party-size'] = $party_size;
             $_POST['special-requests'] = $special_requests;
-            include 'send.php';
 
-            echo json_encode(['status' => 'success', 'message' => 'Reservation created successfully!', 'reservation_id' => $reservation_id]);
+            include 'send.php'; // ✅ Ensures email is sent only after successful booking
+
+            echo json_encode(['status' => 'success', 'message' => 'Reservation created successfully!']);
         } else {
             echo json_encode(['status' => 'error', 'message' => 'Error: ' . $conn->error]);
         }
 
-        exit;
+        exit; // ✅ Ensures no further execution after processing
     }
 
     // Handle fetching menu items
     if ($action === 'get_menu') {
-        $sql = "SELECT name, description, price, image_url FROM menu_items";
+        // Fetch menu items from database
+        $sql = "SELECT name, description, price, image_url FROM menu_items"; // Ensure your table name is correct
         $result = $conn->query($sql);
 
+        // Check if any menu items exist
         if ($result->num_rows > 0) {
             $menuItems = [];
             while ($row = $result->fetch_assoc()) {

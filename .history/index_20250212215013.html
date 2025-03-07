@@ -77,8 +77,7 @@
     <div class="reservation-form">
       <form action="send.php" method="post">
         <label for="date">Select Date:</label>
-        <input type="date" id="date" name="date" required min="<?php echo date('Y-m-d'); ?>">
-
+        <input type="date" id="date" name="date" required>
     
         <label for="time">Select Time:</label>
         <input type="time" id="time" name="time" required>
@@ -221,30 +220,6 @@
     <p>&copy; 2024 Copper's Ivy. All Rights Reserved.</p>
   </footer>
 
-
-
-
-  <script>
-    document.addEventListener("DOMContentLoaded", function () {
-        let today = new Date().toISOString().split("T")[0];
-  
-        // Set min date for reservations
-        document.getElementById("date").setAttribute("min", today);
-  
-        // Set min date for room bookings
-        document.getElementById("check-in-date").setAttribute("min", today);
-  
-        // Update checkout date when check-in date is selected
-        document.getElementById("check-in-date").addEventListener("change", function () {
-            let checkInDate = this.value;
-            document.getElementById("check-out-date").setAttribute("min", checkInDate);
-        });
-    });
-  </script>
-
-
-
-
   
   <script src="https://cdn.botpress.cloud/webchat/v2.2/inject.js"></script>
   <script src="https://files.bpcontent.cloud/2024/12/05/06/20241205062412-612LYK8G.js"></script>
@@ -280,18 +255,18 @@
         let distance = getDistance(restaurantLat, restaurantLon, lat, lon).toFixed(2);
         let cost = (distance * 50).toFixed(2);
 
-        $("#distance").text(`${distance} km`);
-        $("#delivery-cost").text(`Ksh ${cost}`);
+        $("#distance").text(${distance} km);
+        $("#delivery-cost").text(Ksh ${cost});
     }
 
     function updateLocationText(lat, lon) {
         $("#selected-location").text("Fetching location...");
 
-        fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}`)
+        fetch(https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon})
             .then(response => response.json())
             .then(data => {
                 let locationName = data.display_name || "Unknown location";
-                $("#selected-location").text(`📍 ${locationName}`);
+                $("#selected-location").text(📍 ${locationName});
             })
             .catch(() => {
                 $("#selected-location").text("Location not found");
@@ -339,7 +314,7 @@
         let totalAmount = totalItemsCost + totalDeliveryCost;
 
         // Show the total amount in the alert
-        alert(`Your Delivery cost is: Ksh ${totalDeliveryCost.toFixed(2)}`);
+        alert(Your total cost is Ksh ${totalAmount.toFixed(2)} (Items: Ksh ${totalItemsCost.toFixed(2)} + Delivery: Ksh ${totalDeliveryCost.toFixed(2)}).);
 
         // Send AJAX request to PHP for triggering STK Push
         $.ajax({
@@ -355,7 +330,6 @@
         });
     });
 });
-
   </script>
 
 

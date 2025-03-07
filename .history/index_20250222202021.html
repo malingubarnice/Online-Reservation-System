@@ -221,30 +221,6 @@
     <p>&copy; 2024 Copper's Ivy. All Rights Reserved.</p>
   </footer>
 
-
-
-
-  <script>
-    document.addEventListener("DOMContentLoaded", function () {
-        let today = new Date().toISOString().split("T")[0];
-  
-        // Set min date for reservations
-        document.getElementById("date").setAttribute("min", today);
-  
-        // Set min date for room bookings
-        document.getElementById("check-in-date").setAttribute("min", today);
-  
-        // Update checkout date when check-in date is selected
-        document.getElementById("check-in-date").addEventListener("change", function () {
-            let checkInDate = this.value;
-            document.getElementById("check-out-date").setAttribute("min", checkInDate);
-        });
-    });
-  </script>
-
-
-
-
   
   <script src="https://cdn.botpress.cloud/webchat/v2.2/inject.js"></script>
   <script src="https://files.bpcontent.cloud/2024/12/05/06/20241205062412-612LYK8G.js"></script>

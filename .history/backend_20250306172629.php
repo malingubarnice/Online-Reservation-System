@@ -36,15 +36,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             exit;
         }
 
-        // Convert user input time to 12-hour format
-if (!empty($time)) {
-    $formatted_time = date("h:i A", strtotime($time)); // 12-hour format with AM/PM
-    if ($formatted_time === "12:00 AM") {
-        die(json_encode(['status' => 'error', 'message' => 'Invalid time format.']));
-    }
-} else {
-    die(json_encode(['status' => 'error', 'message' => 'Time is required.']));
-}
+        // Convert and validate time format
+        $time = date("H:i:s", strtotime($time));
+        if ($time === false) {
+            echo json_encode(['status' => 'error', 'message' => 'Invalid time format.']);
+            exit;
+        }
 
 
         // Check if the table is already reserved

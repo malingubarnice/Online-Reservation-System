@@ -75,7 +75,7 @@
 <section id="reservations">
     <h1>Make a Reservation</h1>
     <div class="reservation-form">
-      <form action="send.php" method="post">
+      <form id="reservation-form">
         <label for="date">Select Date:</label>
         <input type="date" id="date" name="date" required min="<?php echo date('Y-m-d'); ?>">
 
@@ -220,30 +220,6 @@
   <footer>
     <p>&copy; 2024 Copper's Ivy. All Rights Reserved.</p>
   </footer>
-
-
-
-
-  <script>
-    document.addEventListener("DOMContentLoaded", function () {
-        let today = new Date().toISOString().split("T")[0];
-  
-        // Set min date for reservations
-        document.getElementById("date").setAttribute("min", today);
-  
-        // Set min date for room bookings
-        document.getElementById("check-in-date").setAttribute("min", today);
-  
-        // Update checkout date when check-in date is selected
-        document.getElementById("check-in-date").addEventListener("change", function () {
-            let checkInDate = this.value;
-            document.getElementById("check-out-date").setAttribute("min", checkInDate);
-        });
-    });
-  </script>
-
-
-
 
   
   <script src="https://cdn.botpress.cloud/webchat/v2.2/inject.js"></script>

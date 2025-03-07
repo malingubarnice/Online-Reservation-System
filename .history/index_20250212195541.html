@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Copper's Ivy Integrated Suite</title>
   <link rel="stylesheet" href="styles.css">
-
   <!-- Leaflet.js CSS -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
 
@@ -17,8 +16,6 @@
         border-radius: 10px;
     }
 </style>
-
-
 </head>
 
 
@@ -77,8 +74,7 @@
     <div class="reservation-form">
       <form action="send.php" method="post">
         <label for="date">Select Date:</label>
-        <input type="date" id="date" name="date" required min="<?php echo date('Y-m-d'); ?>">
-
+        <input type="date" id="date" name="date" required>
     
         <label for="time">Select Time:</label>
         <input type="time" id="time" name="time" required>
@@ -117,11 +113,21 @@
  
 
     <!-- Order Section -->
-    <section id="order-online">
-        <!-- Menu Items -->
-        <div class="menu-items">
-            <!-- Menu items dynamically loaded from the backend -->
-        </div>
+<section id="order-online">
+  <!-- Delivery Location Selection -->
+  <label for="delivery-location">Select Delivery Location:</label>
+  <div id="map"></div>
+  
+  <!-- Display Estimated Delivery Cost -->
+  <p><strong>Distance:</strong> <span id="distance">0 km</span></p>
+  <p><strong>Delivery Cost:</strong> <span id="delivery-cost">Ksh 0</span></p>
+
+  <!-- Phone number input for STK Push -->
+  <label for="phone">Enter Your Phone Number:</label>
+  <input type="text" id="phone" placeholder="254XXXXXXXXX">
+  <button class="place-order-btn">Place Order</button>
+</section>
+
         
 
   <!-- Cart Section -->
@@ -137,16 +143,6 @@
             <div class="order-list">
                 <!-- Dynamically added ordered items will appear here -->
             </div>
-
-            <!-- Delivery Location Selection -->
-           <label for="delivery-location">Select Delivery Location:</label>
-           <div id="map"></div>
-           <p>Selected Location: <span id="selected-location"></span></p>
-
-           <!-- Display Estimated Delivery Cost -->
-           <p><strong>Distance:</strong> <span id="distance">0 km</span></p>
-           <p><strong>Delivery Cost:</strong> <span id="delivery-cost">Ksh 0</span></p>
-
 
             <!-- Phone number input (used for STK Push) -->
             <label for="phone">Enter Your Phone Number:</label>
@@ -221,30 +217,6 @@
     <p>&copy; 2024 Copper's Ivy. All Rights Reserved.</p>
   </footer>
 
-
-
-
-  <script>
-    document.addEventListener("DOMContentLoaded", function () {
-        let today = new Date().toISOString().split("T")[0];
-  
-        // Set min date for reservations
-        document.getElementById("date").setAttribute("min", today);
-  
-        // Set min date for room bookings
-        document.getElementById("check-in-date").setAttribute("min", today);
-  
-        // Update checkout date when check-in date is selected
-        document.getElementById("check-in-date").addEventListener("change", function () {
-            let checkInDate = this.value;
-            document.getElementById("check-out-date").setAttribute("min", checkInDate);
-        });
-    });
-  </script>
-
-
-
-
   
   <script src="https://cdn.botpress.cloud/webchat/v2.2/inject.js"></script>
   <script src="https://files.bpcontent.cloud/2024/12/05/06/20241205062412-612LYK8G.js"></script>
@@ -252,109 +224,7 @@
   <!-- External JavaScript -->
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   <script>
-  $(document).ready(function () {
-    // Initialize Map
-    let map = L.map('map').setView([-1.286389, 36.817223], 12);
-
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: '&copy; OpenStreetMap contributors'
-    }).addTo(map);
-
-    const restaurantLat = -1.286389;
-    const restaurantLon = 36.817223;
-    let marker = L.marker([restaurantLat, restaurantLon], { draggable: true }).addTo(map);
-
-    // Function to calculate distance and cost
-    function getDistance(lat1, lon1, lat2, lon2) {
-        const R = 6371;
-        const dLat = (lat2 - lat1) * Math.PI / 180;
-        const dLon = (lon2 - lon1) * Math.PI / 180;
-        const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-                  Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
-                  Math.sin(dLon / 2) * Math.sin(dLon / 2);
-        const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-        return R * c;
-    }
-
-    function updateDeliveryCost(lat, lon) {
-        let distance = getDistance(restaurantLat, restaurantLon, lat, lon).toFixed(2);
-        let cost = (distance * 50).toFixed(2);
-
-        $("#distance").text(`${distance} km`);
-        $("#delivery-cost").text(`Ksh ${cost}`);
-    }
-
-    function updateLocationText(lat, lon) {
-        $("#selected-location").text("Fetching location...");
-
-        fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}`)
-            .then(response => response.json())
-            .then(data => {
-                let locationName = data.display_name || "Unknown location";
-                $("#selected-location").text(`📍 ${locationName}`);
-            })
-            .catch(() => {
-                $("#selected-location").text("Location not found");
-            });
-    }
-
-    // Update location when marker is moved
-    marker.on('dragend', function () {
-        let position = marker.getLatLng();
-        updateDeliveryCost(position.lat, position.lng);
-        updateLocationText(position.lat, position.lng);
-    });
-
-    // Update location when map is clicked
-    map.on("click", function (event) {
-        let lat = event.latlng.lat;
-        let lon = event.latlng.lng;
-        marker.setLatLng([lat, lon]);
-        updateDeliveryCost(lat, lon);
-        updateLocationText(lat, lon);
-    });
-
-    // Handle STK Push on "Place Order" button click
-    $(".place-order-btn").click(function () {
-        var phone = $("#phone").val();
-        
-        // Validate the phone number input
-        if (!phone || phone.length !== 12 || !phone.startsWith('254')) {
-            alert("Please enter a valid phone number starting with '254'.");
-            return;
-        }
-
-        // Get the total cost of the selected items
-        let totalItemsCost = 0;
-        $(".order-list .item").each(function() {
-            let itemPrice = $(this).data("price");  // Assuming each item has a 'data-price' attribute
-            totalItemsCost += parseFloat(itemPrice) || 0;  // Add the price of each item
-        });
-
-        // Get the delivery cost
-        let totalDeliveryCost = $("#delivery-cost").text().replace("Ksh ", "");
-        totalDeliveryCost = parseFloat(totalDeliveryCost) || 0;  // Default to 0 if delivery cost isn't determined yet
-
-        // Calculate total amount to pay (items cost + delivery cost)
-        let totalAmount = totalItemsCost + totalDeliveryCost;
-
-        // Show the total amount in the alert
-        alert(`Your Delivery cost is: Ksh ${totalDeliveryCost.toFixed(2)}`);
-
-        // Send AJAX request to PHP for triggering STK Push
-        $.ajax({
-            url: 'stkpush.php',
-            type: 'POST',
-            data: { phone: phone, amount: totalAmount },
-            success: function (response) {
-                alert("STK Push initiated! Response: " + response);
-            },
-            error: function () {
-                alert("Error initiating STK Push.");
-            }
-        });
-    });
-});
+    
 
   </script>
 
@@ -365,12 +235,12 @@
 
 
 
- <!-- Leaflet.js -->
- <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+
+   <!-- Leaflet.js -->
+   <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 
 
-
-        
+  
 
   <script src="script.js"></script>
 </body>

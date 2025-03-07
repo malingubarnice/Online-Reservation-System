@@ -10,7 +10,7 @@ $conn = new mysqli($servername, $username, $password, $dbname);
 
 // Check connection
 if ($conn->connect_error) {
-    die(json_encode(['status' => 'error', 'message' => 'Database connection failed: ' . $conn->connect_error]));
+    die("Connection failed: " . $conn->connect_error);
 }
 
 // Set content type to JSON
@@ -22,13 +22,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     // Handle reservation creation
     if ($action === 'reserve') {
-        // Validate and sanitize inputs
-        $date = $_POST['date'] ?? '';
-        $time = $_POST['time'] ?? '';
-        $party_size = $_POST['party_size'] ?? '';
-        $contact_info = $_POST['contact_info'] ?? '';
-        $special_requests = $_POST['special_requests'] ?? '';
-        $selected_table = $_POST['selected_table'] ?? '';
+        $date = $_POST['date'];
+        $time = $_POST['time'];
+        $time = date("H:i:s", strtotime($_POST['time'])); // Ensure correct conversion
+        $party_size = $_POST['party_size'];
+        $contact_info = $_POST['contact_info'];
+        $special_requests = $_POST['special_requests'];
+        $selected_table = $_POST['selected_table'];
 
         // Ensure all fields are filled
         if (empty($date) || empty($time) || empty($party_size) || empty($contact_info) || empty($selected_table)) {
@@ -36,16 +36,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             exit;
         }
 
-        // Convert user input time to 12-hour format
-if (!empty($time)) {
-    $formatted_time = date("h:i A", strtotime($time)); // 12-hour format with AM/PM
-    if ($formatted_time === "12:00 AM") {
-        die(json_encode(['status' => 'error', 'message' => 'Invalid time format.']));
-    }
-} else {
-    die(json_encode(['status' => 'error', 'message' => 'Time is required.']));
-}
-
+        // Prevent past dates
+        $currentDate = date('Y-m-d');
+        if ($date < $currentDate) {
+            error_log("DEBUG: User tried to book a past date: $date"); // Log the issue
+            echo json_encode(['status' => 'error', 'message' => 'Invalid date! You cannot select a past date.']);
+            exit; // STOP execution here
+        }
 
         // Check if the table is already reserved
         $sql_check = "SELECT * FROM reservations WHERE date = ? AND time = ? AND table_number = ?";
@@ -59,7 +56,10 @@ if (!empty($time)) {
             exit;
         }
 
-        // Generate a unique reservation ID
+        // DEBUG: If we reach here, the date is valid and table is available
+        error_log("DEBUG: Reservation is valid for date $date at $time on table $selected_table");
+
+        // ✅ Generate a unique reservation ID (format: RES-YYYYMMDD-XXX)
         $reservation_id = "RES-" . date("Ymd") . "-" . rand(100, 999);
 
         // Insert reservation into the database
@@ -69,18 +69,24 @@ if (!empty($time)) {
         $stmt_insert->bind_param("ssissss", $reservation_id, $date, $time, $party_size, $contact_info, $special_requests, $selected_table);
 
         if ($stmt_insert->execute()) {
-            // Send confirmation email
+            error_log("DEBUG: Reservation successfully inserted into the database");
+
+            // ✅ Only send email after a successful reservation
             require 'send.php';
+
             $_POST['contact-info'] = $contact_info;
             $_POST['customer-name'] = 'Valued Customer';
             $_POST['date'] = $date;
             $_POST['time'] = $time;
             $_POST['party-size'] = $party_size;
             $_POST['special-requests'] = $special_requests;
-            include 'send.php';
+
+            include 'send.php'; // ✅ Ensures email is sent only after a valid booking
+            error_log("DEBUG: Email sent successfully to $contact_info");
 
             echo json_encode(['status' => 'success', 'message' => 'Reservation created successfully!', 'reservation_id' => $reservation_id]);
         } else {
+            error_log("DEBUG: Database insertion failed - " . $conn->error);
             echo json_encode(['status' => 'error', 'message' => 'Error: ' . $conn->error]);
         }
 
