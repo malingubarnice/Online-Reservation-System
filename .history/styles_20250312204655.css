@@ -91,7 +91,7 @@ header nav ul li a:hover {
   /* Optional: Adjusting feature links */
   .feature a {
     display: inline-block;
-    background-color: #15ad4d;
+    background-color: #199948;
     color: #fff;
     padding: 10px 20px;
     border-radius: 5px;
@@ -100,7 +100,7 @@ header nav ul li a:hover {
   }
   
   .feature a:hover {
-    background-color: #1dd168;
+    background-color: #27ae60;
   }
   
 
@@ -162,7 +162,7 @@ header nav ul li a:hover {
 }
 
 .reserve-btn:hover {
-    background-color: #10e669;
+    background-color: #27ae60;
 }
 
 /* Table Layout */

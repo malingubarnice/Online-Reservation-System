@@ -117,36 +117,32 @@ document.addEventListener('DOMContentLoaded', () => {
             console.error('Error fetching menu items:', error);
         });
 
-        function updateCartDisplay() {
-            const cartContainer = document.querySelector('.order-list');
-            cartContainer.innerHTML = ''; // Clear current cart display
-            let total = 0;
-        
-            // Display each item in the cart
-            cart.forEach(item => {
-                const cartItemDiv = document.createElement('div');
-                cartItemDiv.classList.add('cart-item');
-                cartItemDiv.setAttribute('data-price', item.price); // Store price for calculations
-                cartItemDiv.innerHTML = `<p>${item.name} - KSh ${item.price.toFixed(2)}</p>`;
-                cartContainer.appendChild(cartItemDiv);
-                total += item.price;
-            });
-        
-            // Display total price of food items (without delivery)
-            const totalDiv = document.createElement('div');
-            totalDiv.classList.add('total-price');
-            totalDiv.innerHTML = `<p>Total Food Cost: KSh ${total.toFixed(2)}</p>`;
-            cartContainer.appendChild(totalDiv);
-
-
-            // Enable/Disable the "Place Order" button based on the cart
-            togglePlaceOrderButton();
-
-        }
         
 
+    // Function to update the cart display
+    function updateCartDisplay() {
+        const cartContainer = document.querySelector('.order-list');
+        cartContainer.innerHTML = ''; // Clear the current cart display
+        let total = 0;
 
+        // Display each item in the cart
+        cart.forEach(item => {
+            const cartItemDiv = document.createElement('div');
+            cartItemDiv.classList.add('cart-item');
+            cartItemDiv.innerHTML = `<p>${item.name} - KSh ${item.price.toFixed(2)}</p>`;
+            cartContainer.appendChild(cartItemDiv);
+            total += item.price;
+        });
 
+        // Display total price
+        const totalDiv = document.createElement('div');
+        totalDiv.classList.add('total-price');
+        totalDiv.innerHTML = `<p>Total: KSh ${total.toFixed(2)}</p>`;
+        cartContainer.appendChild(totalDiv);
+
+        // Enable/Disable the "Place Order" button based on the cart
+        togglePlaceOrderButton();
+    }
 
     // Function to enable/disable the "Place Order" button based on the cart
     function togglePlaceOrderButton() {
@@ -185,112 +181,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 });
-
-
-
-
-function updateTotalCost() {
-    // Get total cost of selected food items
-    let totalItemsCost = 0;
-    $(".order-list .cart-item").each(function () {
-        let itemPrice = parseFloat($(this).data("price")) || 0;
-        totalItemsCost += itemPrice;
-    });
-
-    // Get delivery cost
-    let deliveryCostText = $("#delivery-cost").text().replace("Ksh ", "").trim();
-    let totalDeliveryCost = parseFloat(deliveryCostText) || 0;
-
-    // Calculate total amount (food cost + delivery cost)
-    let totalAmount = totalItemsCost + totalDeliveryCost;
-
-    // Update total cost display immediately
-    $("#total-cost").text(`Ksh ${totalAmount.toFixed(2)}`);
-}
-
-// When a user selects a location and delivery cost is updated, update total cost
-$("#location-dropdown").change(function () {
-    updateTotalCost(); // Call this function when location is changed
-});
-
-// Also call the function when items are added to the cart
-$(".add-to-cart-btn").click(function () {
-    updateTotalCost();
-});
-
-
-
-
-
-
-// Handle STK Push on "Place Order" button click
-$(".place-order-btn").click(function () {
-
-    updateTotalCost(); // Ensure correct total cost before STK push
-
-    var phone = $("#phone").val();
-    var email = $("#email").val();
-
-    // Validate phone number input
-    if (!phone || phone.length !== 12 || !phone.startsWith('254')) {
-        alert("Please enter a valid phone number starting with '254'.");
-        return;
-    }
-
-    // Validate email input
-    if (!email || !email.includes('@')) {
-        alert("Please enter a valid email address.");
-        return;
-    }
-
-    // Get total cost of selected food items
-    let totalItemsCost = 0;
-    $(".order-list .cart-item").each(function () {
-        let itemPrice = parseFloat($(this).data("price")) || 0;
-        totalItemsCost += itemPrice;
-    });
-
-    // Get delivery cost
-    let deliveryCostText = $("#delivery-cost").text().replace("Ksh ", "").trim();
-    let totalDeliveryCost = parseFloat(deliveryCostText) || 0;
-
-    // Calculate total amount
-    let totalAmount = totalItemsCost + totalDeliveryCost;
-
-    // Display total amount to user
-    alert(`Your Total Cost is: Ksh ${totalAmount.toFixed(2)}`);
-
-    // Step 1: Send AJAX request for STK Push first
-    $.ajax({
-        url: 'stkpush.php',
-        type: 'POST',
-        data: { phone: phone, amount: totalAmount },
-        success: function (response) {
-            alert("STK Push initiated!");
-
-            // Step 2: If STK Push is successful, send an email confirmation
-            $.ajax({
-                url: 'process_order.php',
-                type: 'POST',
-                data: { phone: phone, email: email, amount: totalAmount },
-                success: function (emailResponse) {
-                    alert("Order processed successfully! Check your email for confirmation.");
-                },
-                error: function () {
-                    alert("Error sending confirmation email.");
-                }
-            });
-
-        },
-        error: function () {
-            alert("Error initiating STK Push.");
-        }
-    });
-});
-
-
-
-
 
 
 

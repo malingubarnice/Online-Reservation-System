@@ -1,5 +1,5 @@
 <?php
-include 'connection.php'; // Ensure this connects to your database
+require 'backend.php'; // Ensure this connects to your database
 
 header('Content-Type: application/json');
 

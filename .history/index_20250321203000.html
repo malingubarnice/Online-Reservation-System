@@ -17,6 +17,8 @@
         border-radius: 10px;
     }
 </style>
+
+
 </head>
 
 
@@ -144,14 +146,11 @@
            <!-- Display Estimated Delivery Cost -->
            <p><strong>Distance:</strong> <span id="distance">0 km</span></p>
            <p><strong>Delivery Cost:</strong> <span id="delivery-cost">Ksh 0</span></p>
-           <p><strong>Total Cost:</strong> <span id="total-cost">Ksh 0</span></p>
-
 
 
             <!-- Phone number input (used for STK Push) -->
             <label for="phone">Enter Your Phone Number:</label>
             <input type="text" id="phone" placeholder="254XXXXXXXXX">
-            <input type="email" id="email" placeholder="Enter your email" required>
             <button class="place-order-btn">Place Order</button>
         </div>
     </section>
@@ -250,114 +249,50 @@
 
   <!-- External JavaScript -->
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-
-
   <script>
-    $(document).ready(function () {
-    // Initialize Map centered in Nairobi
-    let map = L.map('map').setView([-1.286389, 36.817223], 12);
-
-    // Load OpenStreetMap Tiles
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: '&copy; OpenStreetMap contributors'
-    }).addTo(map);
-
-    // Define Nairobi boundary (approximate coordinates)
-    let nairobiBounds = [
-        [-1.2030, 36.6649], // Northwest
-        [-1.2804, 36.6585], // West
-        [-1.4413, 36.7360], // Southwest
-        [-1.4324, 37.0544], // Southeast
-        [-1.2203, 37.1051], // Northeast
-        [-1.1619, 37.0502]  // North
-    ];
-
-    // Add grey mask for areas outside Nairobi and disable interaction
-    let outsideNairobi = L.polygon([
-        [[-90, -180], [-90, 180], [90, 180], [90, -180]], // Entire world
-        nairobiBounds // Nairobi area (hole in the mask)
-    ], {
-        color: "#999",
-        fillColor: "#999",
-        fillOpacity: 0.7,
-        interactive: false // Disables clicking on greyed-out areas
-    }).addTo(map);
-
-    // Set draggable marker at the restaurant location
-    const restaurantLat = -1.286389;
-    const restaurantLon = 36.817223;
-    let marker = L.marker([restaurantLat, restaurantLon], { draggable: true }).addTo(map);
-
-    // Function to calculate distance and cost
-    function getDistance(lat1, lon1, lat2, lon2) {
-        const R = 6371;
-        const dLat = (lat2 - lat1) * Math.PI / 180;
-        const dLon = (lon2 - lon1) * Math.PI / 180;
-        const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-                  Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
-                  Math.sin(dLon / 2) * Math.sin(dLon / 2);
-        const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-        return R * c;
-    }
-
-    function updateDeliveryCost(lat, lon) {
-        let distance = getDistance(restaurantLat, restaurantLon, lat, lon).toFixed(2);
-        let cost = (distance * 50).toFixed(2);
-
-        $("#distance").text(`${distance} km`);
-        $("#delivery-cost").text(`Ksh ${cost}`);
-    }
-
-    function updateLocationText(lat, lon) {
-        $("#selected-location").text("Fetching location...");
-
-        fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}`)
-            .then(response => response.json())
-            .then(data => {
-                let locationName = data.display_name || "Unknown location";
-                $("#selected-location").text(`📍 ${locationName}`);
-            })
-            .catch(() => {
-                $("#selected-location").text("Location not found");
-            });
-    }
-
-    // Prevent marker placement outside Nairobi
-    function isInsideNairobi(lat, lon) {
-        let inside = L.polygon(nairobiBounds).getBounds().contains([lat, lon]);
-        return inside;
-    }
-
-    // Update location when marker is moved
-    marker.on('dragend', function () {
-        let position = marker.getLatLng();
-        if (!isInsideNairobi(position.lat, position.lng)) {
-            marker.setLatLng([restaurantLat, restaurantLon]); // Reset marker to restaurant
-            alert("Please select a location within Nairobi.");
-        } else {
-            updateDeliveryCost(position.lat, position.lng);
-            updateLocationText(position.lat, position.lng);
-        }
-    });
-
-    // Update location when map is clicked (only inside Nairobi)
-    map.on("click", function (event) {
-        let lat = event.latlng.lat;
-        let lon = event.latlng.lng;
-
-        if (isInsideNairobi(lat, lon)) {
-            marker.setLatLng([lat, lon]);
-            updateDeliveryCost(lat, lon);
-            updateLocationText(lat, lon);
-        } else {
-            alert("Please select a location within Nairobi.");
-        }
-    });
-});
-
-
-
     
+
+    // Handle STK Push on "Place Order" button click
+    $(".place-order-btn").click(function () {
+        var phone = $("#phone").val();
+        
+        // Validate the phone number input
+        if (!phone || phone.length !== 12 || !phone.startsWith('254')) {
+            alert("Please enter a valid phone number starting with '254'.");
+            return;
+        }
+
+        // Get the total cost of the selected items
+        let totalItemsCost = 0;
+        $(".order-list .item").each(function() {
+            let itemPrice = $(this).data("price");  // Assuming each item has a 'data-price' attribute
+            totalItemsCost += parseFloat(itemPrice) || 0;  // Add the price of each item
+        });
+
+        // Get the delivery cost
+        let totalDeliveryCost = $("#delivery-cost").text().replace("Ksh ", "");
+        totalDeliveryCost = parseFloat(totalDeliveryCost) || 0;  // Default to 0 if delivery cost isn't determined yet
+
+        // Calculate total amount to pay (items cost + delivery cost)
+        let totalAmount = totalItemsCost + totalDeliveryCost;
+
+        // Show the total amount in the alert
+        alert(`Your Delivery cost is: Ksh ${totalDeliveryCost.toFixed(2)}`);
+
+        // Send AJAX request to PHP for triggering STK Push
+        $.ajax({
+            url: 'stkpush.php',
+            type: 'POST',
+            data: { phone: phone, amount: totalAmount },
+            success: function (response) {
+                alert("STK Push initiated! Response: " + response);
+            },
+            error: function () {
+                alert("Error initiating STK Push.");
+            }
+        });
+    });
+
 
   </script>
 

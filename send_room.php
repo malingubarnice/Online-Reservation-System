@@ -53,13 +53,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         // Send email
         $mail->send();
 
-        // Notify user
-        echo "
-        <script> 
-        alert('Room booking email sent successfully!');
-        document.location.href = 'index.html'; // Redirect to homepage or any other page
-        </script>
-        ";
+        header("Location: index.html");
+        exit;
+
     } catch (Exception $e) {
         echo "Message could not be sent. Mailer Error: {$mail->ErrorInfo}";
     }

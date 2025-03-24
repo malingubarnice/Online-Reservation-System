@@ -39,8 +39,8 @@ while ($row = $result->fetch_assoc()) {
         th { background-color: #f4f4f4; }
         form { margin-bottom: 20px; }
         input, button { padding: 10px; margin: 5px; }
-        button { background-color:rgb(25, 167, 79); color: white; border: none; cursor: pointer; }
-        button:hover { background-color:rgb(25, 167, 79); }
+        button { background-color:rgb(19, 104, 51); color: white; border: none; cursor: pointer; }
+        button:hover { background-color:rgb(7, 80, 43); }
     </style>
 </head>
 <body>

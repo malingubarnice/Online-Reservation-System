@@ -17,6 +17,8 @@
         border-radius: 10px;
     }
 </style>
+
+
 </head>
 
 
@@ -144,14 +146,11 @@
            <!-- Display Estimated Delivery Cost -->
            <p><strong>Distance:</strong> <span id="distance">0 km</span></p>
            <p><strong>Delivery Cost:</strong> <span id="delivery-cost">Ksh 0</span></p>
-           <p><strong>Total Cost:</strong> <span id="total-cost">Ksh 0</span></p>
-
 
 
             <!-- Phone number input (used for STK Push) -->
             <label for="phone">Enter Your Phone Number:</label>
             <input type="text" id="phone" placeholder="254XXXXXXXXX">
-            <input type="email" id="email" placeholder="Enter your email" required>
             <button class="place-order-btn">Place Order</button>
         </div>
     </section>
@@ -357,7 +356,60 @@
 
 
 
-    
+    // Handle STK Push on "Place Order" button click
+    $(".place-order-btn").click(function () {
+        var phone = $("#phone").val();
+        
+        // Validate the phone number input
+        if (!phone || phone.length !== 12 || !phone.startsWith('254')) {
+            alert("Please enter a valid phone number starting with '254'.");
+            return;
+        }
+
+
+        // Function to update total cost display
+function updateTotalCost() {
+    let totalItemsCost = 0;
+
+    // Sum all selected food items' prices
+    $(".order-list .item").each(function () {
+        let itemPrice = $(this).data("price") || 0;
+        totalItemsCost += parseFloat(itemPrice);
+    });
+
+    // Get current delivery cost
+    let totalDeliveryCost = parseFloat($("#delivery-cost").text().replace("Ksh ", "")) || 0;
+
+    // Calculate total amount
+    let totalAmount = totalItemsCost + totalDeliveryCost;
+
+    // Display total cost
+    $("#total-cost").text(`Ksh ${totalAmount.toFixed(2)}`);
+}
+
+// Call updateTotalCost whenever a food item is added or removed
+$(".order-list").on("DOMSubtreeModified", updateTotalCost);
+
+// Call updateTotalCost whenever delivery cost updates
+marker.on("dragend", updateTotalCost);
+map.on("click", updateTotalCost);
+
+
+
+        // Send AJAX request to PHP for triggering STK Push
+        $.ajax({
+            url: 'stkpush.php',
+            type: 'POST',
+            data: { phone: phone, amount: totalAmount },
+            success: function (response) {
+                alert("STK Push initiated! Response: " + response);
+            },
+            error: function () {
+                alert("Error initiating STK Push.");
+            }
+        });
+    });
+
 
   </script>
 

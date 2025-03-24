@@ -17,6 +17,11 @@ if (!empty($search)) {
 }
 
 $query .= " ORDER BY check_in_date DESC"; // Order by check-in date
+total_count_query = "SELECT COUNT(*) as total FROM bookings";
+$total_count_result = $conn->query($total_count_query);
+$total_count_row = $total_count_result->fetch_assoc();
+$total_bookings = $total_count_row['total'];
+
 $result = $conn->query($query);
 
 // Store bookings grouped by check-in date
@@ -39,12 +44,13 @@ while ($row = $result->fetch_assoc()) {
         th { background-color: #f4f4f4; }
         form { margin-bottom: 20px; }
         input, button { padding: 10px; margin: 5px; }
-        button { background-color:rgb(25, 167, 79); color: white; border: none; cursor: pointer; }
-        button:hover { background-color:rgb(25, 167, 79); }
+        button { background-color: #007bff; color: white; border: none; cursor: pointer; }
+        button:hover { background-color: #0056b3; }
     </style>
 </head>
 <body>
     <h2>Search Bookings</h2>
+    <p>Total Bookings: <?php echo $total_bookings; ?></p>
     <form method="GET">
         <input type="text" name="search" placeholder="Enter Booking ID (e.g., BKG-89543)" 
                value="<?php echo htmlspecialchars($search); ?>">
@@ -92,10 +98,5 @@ while ($row = $result->fetch_assoc()) {
     <?php } else { ?>
         <p>No bookings found.</p>
     <?php } ?>
-
-    <!-- CSV Export -->
-    <form action="export_bookings.php" method="POST">
-        <button type="submit">Export to CSV</button>
-    </form>
 </body>
 </html>

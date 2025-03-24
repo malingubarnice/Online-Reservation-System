@@ -17,6 +17,8 @@
         border-radius: 10px;
     }
 </style>
+
+
 </head>
 
 
@@ -144,14 +146,11 @@
            <!-- Display Estimated Delivery Cost -->
            <p><strong>Distance:</strong> <span id="distance">0 km</span></p>
            <p><strong>Delivery Cost:</strong> <span id="delivery-cost">Ksh 0</span></p>
-           <p><strong>Total Cost:</strong> <span id="total-cost">Ksh 0</span></p>
-
 
 
             <!-- Phone number input (used for STK Push) -->
             <label for="phone">Enter Your Phone Number:</label>
             <input type="text" id="phone" placeholder="254XXXXXXXXX">
-            <input type="email" id="email" placeholder="Enter your email" required>
             <button class="place-order-btn">Place Order</button>
         </div>
     </section>
@@ -357,7 +356,53 @@
 
 
 
-    
+
+
+
+
+
+
+    // Handle STK Push on "Place Order" button click
+    $(".place-order-btn").click(function () {
+        var phone = $("#phone").val();
+        
+        // Validate the phone number input
+        if (!phone || phone.length !== 12 || !phone.startsWith('254')) {
+            alert("Please enter a valid phone number starting with '254'.");
+            return;
+        }
+
+        // Get the total cost of the selected items
+        let totalItemsCost = 0;
+        $(".order-list .item").each(function() {
+            let itemPrice = $(this).data("price");  // Assuming each item has a 'data-price' attribute
+            totalItemsCost += parseFloat(itemPrice) || 0;  // Add the price of each item
+        });
+
+        // Get the delivery cost
+        let totalDeliveryCost = $("#delivery-cost").text().replace("Ksh ", "");
+        totalDeliveryCost = parseFloat(totalDeliveryCost) || 0;  // Default to 0 if delivery cost isn't determined yet
+
+        // Calculate total amount to pay (items cost + delivery cost)
+        let totalAmount = totalItemsCost + totalDeliveryCost;
+
+        // Show the total amount in the alert
+        alert(`Your Delivery cost is: Ksh ${totalDeliveryCost.toFixed(2)}`);
+
+        // Send AJAX request to PHP for triggering STK Push
+        $.ajax({
+            url: 'stkpush.php',
+            type: 'POST',
+            data: { phone: phone, amount: totalAmount },
+            success: function (response) {
+                alert("STK Push initiated! Response: " + response);
+            },
+            error: function () {
+                alert("Error initiating STK Push.");
+            }
+        });
+    });
+
 
   </script>
 
