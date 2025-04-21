@@ -1,0 +1,46 @@
+<?php
+// Database connection details
+$servername = "localhost";
+$username = "root";
+$password = "";
+$dbname = "coppers_ivy"; // Database name
+
+// Create connection
+$conn = new mysqli($servername, $username, $password, $dbname);
+
+// Check connection
+if ($conn->connect_error) {
+    die("Connection failed: " . $conn->connect_error);
+}
+
+// Collect form data
+$room_id = $_POST['room_id'];  // Room ID from the hidden input
+$check_in_date = $_POST['check_in_date'];  // Check-in date
+$check_out_date = $_POST['check_out_date'];  // Check-out date
+$guest_count = $_POST['guest_count'];  // Number of guests
+$contact_info = $_POST['contact-info'];  // User's contact info
+$status = "pending";  // Set status as pending initially
+$created_at = date("Y-m-d H:i:s");  // Current timestamp
+
+// Generate unique booking ID
+$booking_id = "BKG-" . date("Ymd") . "-" . rand(100, 999);
+
+// SQL query to insert data into bookings2 table
+$sql = "INSERT INTO bookings2 (booking_id, room_id, check_in_date, check_out_date, guest_count, contact_info, status, created_at)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+
+// Prepare and bind
+$stmt = $conn->prepare($sql);
+$stmt->bind_param("sissssss", $booking_id, $room_id, $check_in_date, $check_out_date, $guest_count, $contact_info, $status, $created_at);
+
+// Execute the query
+if ($stmt->execute()) {
+    echo "Booking data inserted successfully!";
+} else {
+    echo "Error: " . $stmt->error;
+}
+
+// Close the connection
+$stmt->close();
+$conn->close();
+?>

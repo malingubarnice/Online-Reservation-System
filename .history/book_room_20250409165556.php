@@ -23,12 +23,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Handle reservation creation
     if ($action === 'reserve') {
         // Validate and sanitize inputs
-        $date = $_POST['date'] ?? '';
-        $time = $_POST['time'] ?? '';
-        $party_size = $_POST['party_size'] ?? '';
-        $contact_info = $_POST['contact_info'] ?? '';
-        $special_requests = $_POST['special_requests'] ?? '';
-        $selected_table = $_POST['selected_table'] ?? '';
+        $date1 = $_POST['check-in-date'] ?? '';
+        $date2 = $_POST['check-out-date'] ?? '';
+        $guests = $_POST['guest-count']?? '';
+        $contact = $_POST['contact-info']?? '';
+        
+        
 
         // Ensure all fields are filled
         if (empty($date) || empty($time) || empty($party_size) || empty($contact_info) || empty($selected_table)) {

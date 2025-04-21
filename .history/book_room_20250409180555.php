@@ -17,6 +17,10 @@ if ($conn->connect_error) {
     echo "Successfully connected to the database!<br>";
 }
 
+// Debugging output to check $_POST values
+echo '<pre>';
+print_r($_POST);  // Display all form data to debug
+echo '</pre>';
 
 // Ensure form fields are set and validate them
 if (isset($_POST['room_id'], $_POST['check_in_date'], $_POST['check_out_date'], $_POST['guest_count'], $_POST['contact-info'])) {

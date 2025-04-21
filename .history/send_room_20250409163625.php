@@ -53,7 +53,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         // Send email
         $mail->send();
 
-        header("Location: book_room.php");
+        header("Location: seperate_room.html");
         exit;
 
     } catch (Exception $e) {

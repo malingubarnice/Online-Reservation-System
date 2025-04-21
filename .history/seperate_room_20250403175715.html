@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Room Booking</title>
+</head>
+<body>
+    <!-- Rooms Section -->
+<section id="rooms">
+    <h1>Book a Room</h1>
+    <p>Explore our luxury rooms and make a booking today.</p>
+    
+    <div class="room-list">
+      <!-- Room cards dynamically loaded -->
+    </div>
+  
+    <!--A Booking Form-->
+  <!-- Booking form (initially hidden) -->
+  
+  <div class="reservation-form">
+    <form action="send_room.php" method="post">
+        <!-- Hidden input for room ID -->
+        <input type="hidden" id="room_id" name="room_id">
+        
+        <label for="room-selection">Room</label>
+        <input type="text" id="room-selection" name="room_name" readonly>
+  
+        <label for="check-in-date">Check-in Date</label>
+        <input type="date" id="check-in-date" name="check_in_date" required>
+  
+        <label for="check-out-date">Check-out Date</label>
+        <input type="date" id="check-out-date" name="check_out_date" required>
+  
+        <label for="guest-count">Number of Guests</label>
+        <input type="number" id="guest-count" name="guest_count" min="1" required>
+  
+        <label for="contact-info">Contact Information</label>
+        <input type="text" id="contact-info" name="contact-info" placeholder="Enter your contact info" required>
+  
+        <p id="price-display"></p>
+        <input type="hidden" id="price" name="price">
+  
+  
+        <button type="submit" class="reserve-btn">Book Room</button>
+    </form>
+  </div>
+  
+  
+  
+</body>
+</html>

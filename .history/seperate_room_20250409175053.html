@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Book a Room</title>
+    <link rel="stylesheet" href="styles.css"> <!-- Link your existing CSS -->
+</head>
+<body>
+    <!-- Navigation Bar -->
+  <header>
+    <div class="logo">
+      <img src="assets/logo.jpg" alt="Copper Ivy Logo">
+    </div>
+    <nav class="navbar">
+      <ul>
+        <li><a href="index.html" class="home-link">Home</a></li>
+        <li><a href="index.html#reservations" class="reservation-link">Reservations</a></li>
+        <li><a href="index.html#menu">Menu</a></li>
+        <li><a href="index.html#rooms">Rooms</a></li>
+        <li><a href="index.html#cart">Cart</a></li>
+        <li><a href="index.html#contact">Contact Us</a></li>
+      </ul>
+    </nav>
+  </header>
+    
+
+
+
+
+
+
+    <!-- Rooms Section -->
+    <section id="rooms">
+        <h1>Book a Room</h1>
+        <p>Explore our luxury rooms and make a booking today.</p>
+        
+        <div class="room-list">
+            <!-- Room cards dynamically loaded -->
+        </div>
+
+        <!-- Booking Form -->
+        <div class="reservation-form">
+            <form action="send_room.php" method="post">
+                
+            </form>
+        </div>
+    </section>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            let today = new Date().toISOString().split("T")[0];
+
+            // Set min date for reservations
+            document.getElementById("check-in-date").setAttribute("min", today);
+
+            // Update checkout date when check-in date is selected
+            document.getElementById("check-in-date").addEventListener("change", function () {
+                let checkInDate = this.value;
+                document.getElementById("check-out-date").setAttribute("min", checkInDate);
+            });
+        });
+    </script>
+
+    <script src="roomjs.js"></script>
+    <script src="https://cdn.botpress.cloud/webchat/v2.2/inject.js"></script>
+  <script src="https://files.bpcontent.cloud/2024/12/05/06/20241205062412-612LYK8G.js"></script>
+
+</body>
+</html>

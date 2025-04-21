@@ -3,7 +3,7 @@
 $servername = "localhost";
 $username = "root";
 $password = "";
-$dbname = "coppers_ivy"; // Database name
+$dbname = "coppers_ivy";
 
 // Create connection
 $conn = new mysqli($servername, $username, $password, $dbname);
@@ -20,9 +20,8 @@ header('Content-Type: application/json');
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $action = $_POST['action'] ?? '';
 
-    // Handle reservation creation
+    // 1. HANDLE RESERVATIONS
     if ($action === 'reserve') {
-        // Validate and sanitize inputs
         $date = $_POST['date'] ?? '';
         $time = $_POST['time'] ?? '';
         $party_size = $_POST['party_size'] ?? '';
@@ -30,16 +29,18 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $special_requests = $_POST['special_requests'] ?? '';
         $selected_table = $_POST['selected_table'] ?? '';
 
-        // Ensure all fields are filled
         if (empty($date) || empty($time) || empty($party_size) || empty($contact_info) || empty($selected_table)) {
             echo json_encode(['status' => 'error', 'message' => 'All fields are required.']);
             exit;
         }
 
-       
+        $formatted_time = date("h:i A", strtotime($time));
+        if ($formatted_time === "12:00 AM") {
+            echo json_encode(['status' => 'error', 'message' => 'Invalid time format.']);
+            exit;
+        }
 
-
-        // Check if the table is already reserved
+        // Check if table is already reserved
         $sql_check = "SELECT * FROM reservations WHERE date = ? AND time = ? AND table_number = ?";
         $stmt_check = $conn->prepare($sql_check);
         $stmt_check->bind_param("sss", $date, $time, $selected_table);
@@ -51,17 +52,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             exit;
         }
 
-        // Generate a unique reservation ID
         $reservation_id = "RES-" . date("Ymd") . "-" . rand(100, 999);
 
-        // Insert reservation into the database
         $sql_insert = "INSERT INTO reservations (reservation_id, date, time, party_size, contact_info, special_requests, table_number) 
                        VALUES (?, ?, ?, ?, ?, ?, ?)";
         $stmt_insert = $conn->prepare($sql_insert);
         $stmt_insert->bind_param("ssissss", $reservation_id, $date, $time, $party_size, $contact_info, $special_requests, $selected_table);
 
         if ($stmt_insert->execute()) {
-            // Send confirmation email
             require 'send.php';
             $_POST['contact-info'] = $contact_info;
             $_POST['customer-name'] = 'Valued Customer';
@@ -79,7 +77,41 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         exit;
     }
 
-    // Handle fetching menu items
+    // 2. HANDLE ROOM BOOKING
+    if ($action === 'book_room') {
+        $room_id = $_POST['room_id'] ?? '';
+        $check_in_date = $_POST['check_in_date'] ?? '';
+        $check_out_date = $_POST['check_out_date'] ?? '';
+        $guest_count = $_POST['guest_count'] ?? '';
+        $contact_info = $_POST['contact_info'] ?? '';
+
+        if (empty($room_id) || empty($check_in_date) || empty($check_out_date) || empty($guest_count) || empty($contact_info)) {
+            echo json_encode(['status' => 'error', 'message' => 'All booking fields are required.']);
+            exit;
+        }
+
+        $booking_id = "BKG-" . date("Ymd") . "-" . str_pad(rand(0, 999), 3, '0', STR_PAD_LEFT);
+        $status = 'pending';
+
+        $sql = "INSERT INTO bookings (booking_id, room_id, check_in_date, check_out_date, guest_count, contact_info, status) 
+                VALUES (?, ?, ?, ?, ?, ?, ?)";
+        $stmt = $conn->prepare($sql);
+        $stmt->bind_param("sississ", $booking_id, $room_id, $check_in_date, $check_out_date, $guest_count, $contact_info, $status);
+
+        if ($stmt->execute()) {
+            echo json_encode([
+                'status' => 'success',
+                'message' => 'Room booked successfully!',
+                'booking_id' => $booking_id
+            ]);
+        } else {
+            echo json_encode(['status' => 'error', 'message' => 'Booking failed: ' . $conn->error]);
+        }
+
+        exit;
+    }
+
+    // 3. GET MENU ITEMS
     if ($action === 'get_menu') {
         $sql = "SELECT name, description, price, image_url FROM menu_items";
         $result = $conn->query($sql);

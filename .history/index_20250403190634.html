@@ -50,7 +50,7 @@
       <a href="#menu" class="btn">Order Online</a>
     </div>
     <div class="feature">
-      <a href="seperate_room.html" class="btn" class="rooms-link">Book a Room</a>
+      <a href="seperate_room.html" class="btn">Book a Room</a>
     </div>
   </section>
 
@@ -201,6 +201,25 @@
   </footer>
 
 
+
+
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+        let today = new Date().toISOString().split("T")[0];
+  
+        // Set min date for reservations
+        document.getElementById("date").setAttribute("min", today);
+  
+        // Set min date for room bookings
+        document.getElementById("check-in-date").setAttribute("min", today);
+  
+        // Update checkout date when check-in date is selected
+        document.getElementById("check-in-date").addEventListener("change", function () {
+            let checkInDate = this.value;
+            document.getElementById("check-out-date").setAttribute("min", checkInDate);
+        });
+    });
+  </script>
 
 
   

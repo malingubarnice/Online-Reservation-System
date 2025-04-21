@@ -23,15 +23,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Handle reservation creation
     if ($action === 'reserve') {
         // Validate and sanitize inputs
-        $date = $_POST['date'] ?? '';
-        $time = $_POST['time'] ?? '';
-        $party_size = $_POST['party_size'] ?? '';
-        $contact_info = $_POST['contact_info'] ?? '';
-        $special_requests = $_POST['special_requests'] ?? '';
-        $selected_table = $_POST['selected_table'] ?? '';
+        $date1 = $_POST['check-in-date'] ?? '';
+        $date2 = $_POST['check-out-date'] ?? '';
+        $guests = $_POST['guest-count']?? '';
+        $contact = $_POST['contact-info']?? '';
+        
+        
 
         // Ensure all fields are filled
-        if (empty($date) || empty($time) || empty($party_size) || empty($contact_info) || empty($selected_table)) {
+        if (empty($date1) || empty($date2) || empty($guests) || empty($contact) {
             echo json_encode(['status' => 'error', 'message' => 'All fields are required.']);
             exit;
         }
@@ -39,26 +39,26 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
        
 
 
-        // Check if the table is already reserved
-        $sql_check = "SELECT * FROM reservations WHERE date = ? AND time = ? AND table_number = ?";
+        // Check if the room is already reserved
+        $sql_check = "SELECT * FROM bookings2 WHERE check_in_date = ? AND check_out_date = ?";
         $stmt_check = $conn->prepare($sql_check);
-        $stmt_check->bind_param("sss", $date, $time, $selected_table);
+        $stmt_check->bind_param("ssiss", $date1, $date2, $guests, $contact);  // Bind parameters: 'ssiss' - string, string, integer, string
         $stmt_check->execute();
         $result_check = $stmt_check->get_result();
 
         if ($result_check->num_rows > 0) {
-            echo json_encode(['status' => 'error', 'message' => 'This table is already reserved for the selected date and time.']);
+            echo json_encode(['status' => 'error', 'message' => 'This room is already reserved for the selected date and time.']);
             exit;
         }
 
         // Generate a unique reservation ID
-        $reservation_id = "RES-" . date("Ymd") . "-" . rand(100, 999);
+        $booking_id = "RES-" . date("Ymd") . "-" . rand(100, 999);
 
         // Insert reservation into the database
-        $sql_insert = "INSERT INTO reservations (reservation_id, date, time, party_size, contact_info, special_requests, table_number) 
-                       VALUES (?, ?, ?, ?, ?, ?, ?)";
+        $sql_insert = "INSERT INTO bookings2 (booking_id, room_id, check_in_date, check_out_date, guest_count, contact_info, status, created_at)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
         $stmt_insert = $conn->prepare($sql_insert);
-        $stmt_insert->bind_param("ssissss", $reservation_id, $date, $time, $party_size, $contact_info, $special_requests, $selected_table);
+        $stmt_insert->bind_param("ssissss", $booking_id, $room_id, $check_in_date, $check_out_date, $guest_count, $special_requests, $selected_table);
 
         if ($stmt_insert->execute()) {
             // Send confirmation email

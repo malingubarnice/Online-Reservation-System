@@ -1,0 +1,133 @@
+
+
+
+
+
+
+
+
+document.addEventListener('DOMContentLoaded', function () {
+    fetch('get_room.php')
+      .then(response => response.json())
+      .then(data => {
+        if (Array.isArray(data)) {
+          displayRooms(data);
+        } else {
+          console.error('Error fetching rooms:', data.message);
+        }
+      })
+      .catch(error => console.error('Error fetching room data:', error));
+});
+
+function displayRooms(rooms) {
+    const roomListContainer = document.querySelector('.room-list');
+    roomListContainer.innerHTML = ""; // Clear previous content
+
+    rooms.forEach(room => {
+        const roomHTML = `
+            <div class="room-card">
+                <img src="${room.image_url}" alt="${room.room_name}" style="width: 100%; height: 200px; object-fit: cover;">
+                <h2>${room.room_name}</h2>
+                <p>Type: ${room.room_type}</p>
+                <p>Capacity: ${room.capacity} guests</p>
+                <p>${room.description}</p>
+                <p>Price: KSh ${room.price_per_night.toLocaleString()}</p>
+                <button onclick="selectRoom(${room.room_id}, '${room.room_name}', ${room.price_per_night})">Book Now</button>
+            </div>
+        `;
+        roomListContainer.innerHTML += roomHTML;
+    });
+}
+
+function selectRoom(roomId, roomName, price) {
+    console.log(`Room selected: ${roomName} (ID: ${roomId})`);
+
+    document.getElementById('room-selection').value = roomName;
+    document.getElementById('room_id').value = roomId;
+    document.getElementById('price').textContent = `KSh ${price.toLocaleString()}`;
+    document.querySelector('.booking-form').style.display = 'block';
+}
+
+document.getElementById('room-booking-form').addEventListener('submit', function (event) {
+    event.preventDefault();
+
+    const roomId = document.getElementById('room_id').value;
+    const checkInDate = document.getElementById('check-in-date').value;
+    const checkOutDate = document.getElementById('check-out-date').value;
+    const guestCount = document.getElementById('guest-count').value;
+    const contactInfo = document.getElementById('contact-info').value;
+
+    const today = new Date();
+    const checkIn = new Date(checkInDate);
+    const checkOut = new Date(checkOutDate);
+
+    today.setHours(0, 0, 0, 0);
+    checkIn.setHours(0, 0, 0, 0);
+    checkOut.setHours(0, 0, 0, 0);
+
+    if (checkIn < today) {
+        alert("Check-in date cannot be in the past.");
+        return;
+    }
+
+    if (checkIn >= checkOut) {
+        alert("Check-out date must be after check-in date.");
+        return;
+    }
+
+    fetch('book_room.php', {
+        method: 'POST',
+        body: JSON.stringify({
+            room_id: roomId,
+            check_in_date: checkInDate,
+            check_out_date: checkOutDate,
+            guest_count: guestCount,
+            contact_info: contactInfo
+        }),
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.status === 'success') {
+            alert('Booking confirmed!');
+            location.reload();
+        } else {
+            alert('Error: ' + data.message);
+        }
+    })
+    .catch(error => console.error('Error:', error));
+});
+
+
+
+document.addEventListener("DOMContentLoaded", function () {
+    document.querySelector(".reserve-btn").addEventListener("click", function (event) {
+        event.preventDefault(); // Prevent page reload
+
+        let formData = {
+            room_id: document.getElementById("room_id").value,
+            check_in_date: document.getElementById("check-in-date").value,
+            check_out_date: document.getElementById("check-out-date").value,
+            guest_count: document.getElementById("guest-count").value,
+            contact_info: document.getElementById("contact-info").value
+        };
+
+        fetch("book_room.php", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(formData)
+        })
+        .then(response => response.json())
+        .then(data => {
+            alert(data.message); // Show "Booking confirmed! Email sent."
+            
+            if (data.status === "success") {
+                // Optional: Redirect to a confirmation page
+                window.location.href = "confirmation.php"; 
+            }
+        })
+        .catch(error => console.error("Error:", error));
+    });
+});

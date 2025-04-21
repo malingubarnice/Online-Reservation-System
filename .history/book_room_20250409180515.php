@@ -17,12 +17,15 @@ if ($conn->connect_error) {
     echo "Successfully connected to the database!<br>";
 }
 
+// Debugging output to check $_POST values
+echo '<pre>';
+print_r($_POST);  // Display all form data to debug
+echo '</pre>';
 
 // Ensure form fields are set and validate them
 if (isset($_POST['room_id'], $_POST['check_in_date'], $_POST['check_out_date'], $_POST['guest_count'], $_POST['contact-info'])) {
     
     // Retrieve data from the form
-    $room_id = $_POST['room_id'];
     $check_in_date = $_POST['check_in_date'];
     $check_out_date = $_POST['check_out_date'];
     $guest_count = $_POST['guest_count'];
@@ -39,7 +42,7 @@ if (isset($_POST['room_id'], $_POST['check_in_date'], $_POST['check_out_date'], 
     $booking_id = "BKG-" . date("Ymd") . "-" . rand(100, 999);
 
     // SQL query to insert data into bookings2 table
-    $sql = "INSERT INTO bookings2 (booking_id, room_id, check_in_date, check_out_date, guest_count, contact_info, status, created_at)
+    $sql = "INSERT INTO bookings2 (booking_id, check_in_date, check_out_date, guest_count, contact_info, status, created_at)
             VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
 
     // Prepare and bind
@@ -56,7 +59,7 @@ if (isset($_POST['room_id'], $_POST['check_in_date'], $_POST['check_out_date'], 
     // Close the statement
     $stmt->close();
 } else {
-    echo "Booking done Successfully!.";
+    echo "Error: Missing required form fields.";
 }
 
 // Close the connection

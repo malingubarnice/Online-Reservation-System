@@ -23,15 +23,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Handle reservation creation
     if ($action === 'reserve') {
         // Validate and sanitize inputs
-        $date = $_POST['date'] ?? '';
-        $time = $_POST['time'] ?? '';
-        $party_size = $_POST['party_size'] ?? '';
-        $contact_info = $_POST['contact_info'] ?? '';
-        $special_requests = $_POST['special_requests'] ?? '';
-        $selected_table = $_POST['selected_table'] ?? '';
+        $date1 = $_POST['check-in-date'] ?? '';
+        $date2 = $_POST['check-out-date'] ?? '';
+        $guests = $_POST['guest-count']?? '';
+        $contact = $_POST['contact-info']?? '';
+        
+        
 
         // Ensure all fields are filled
-        if (empty($date) || empty($time) || empty($party_size) || empty($contact_info) || empty($selected_table)) {
+        if (empty($date1) || empty($date2) || empty($guests) || empty($contact) {
             echo json_encode(['status' => 'error', 'message' => 'All fields are required.']);
             exit;
         }
@@ -39,8 +39,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
        
 
 
-        // Check if the table is already reserved
-        $sql_check = "SELECT * FROM reservations WHERE date = ? AND time = ? AND table_number = ?";
+        // Check if the room is already reserved
+        $sql_check = "SELECT * FROM bookings2 WHERE date1 = ? AND date2 = ? AND table_number = ?";
         $stmt_check = $conn->prepare($sql_check);
         $stmt_check->bind_param("sss", $date, $time, $selected_table);
         $stmt_check->execute();

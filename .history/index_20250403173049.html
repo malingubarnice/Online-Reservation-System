@@ -32,7 +32,7 @@
         <li><a href="#menu">Home</a></li>
         <li><a href="#reservations">Reservations</a></li>
         <li><a href="#menu">Menu</a></li>
-        <li><a href="seperate_room.html" class="rooms-link">Rooms</a></li>
+        <li><a href="#rooms">Rooms</a></li>
         <li><a href="#cart">Cart</a></li>
         <li><a href="#contact">Contact Us</a></li>
       </ul>
@@ -50,7 +50,7 @@
       <a href="#menu" class="btn">Order Online</a>
     </div>
     <div class="feature">
-      <a href="seperate_room.html" class="btn" class="rooms-link">Book a Room</a>
+      <a href="#rooms" class="btn">Book a Room</a>
     </div>
   </section>
 
@@ -159,23 +159,6 @@
 
 
 
-<!-- Rooms Section -->
-<section id="rooms">
-  <a href="seperate_room.html" class="booking-link">Book a Room with us today?</a>
-
-  
-  
-  <div class="">
-    <!-- Room cards dynamically loaded -->
-  </div>
-
-  <!--A Booking Form-->
-<!-- Booking form (initially hidden) -->
-
-<div class="reservation-form">
-  
-
-</div>
 
 
 
@@ -201,6 +184,25 @@
   </footer>
 
 
+
+
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+        let today = new Date().toISOString().split("T")[0];
+  
+        // Set min date for reservations
+        document.getElementById("date").setAttribute("min", today);
+  
+        // Set min date for room bookings
+        document.getElementById("check-in-date").setAttribute("min", today);
+  
+        // Update checkout date when check-in date is selected
+        document.getElementById("check-in-date").addEventListener("change", function () {
+            let checkInDate = this.value;
+            document.getElementById("check-out-date").setAttribute("min", checkInDate);
+        });
+    });
+  </script>
 
 
   

@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Book a Room</title>
+    <link rel="stylesheet" href="styles.css"> <!-- Link your existing CSS -->
+</head>
+<body>
+    <!-- Navigation Bar -->
+  <header>
+    <div class="logo">
+      <img src="assets/logo.jpg" alt="Copper Ivy Logo">
+    </div>
+    <nav class="navbar">
+      <ul>
+        <li><a href="index.html" class="home-link">Home</a></li>
+        <li><a href="index.html" class="reservation-link">Reservations</a></li>
+        <li><a href="index.html#menu">Menu</a></li>
+        <li><a href="index.html#rooms">Rooms</a></li>
+        <li><a href="index.html#cart">Cart</a></li>
+        <li><a href="index.html#contact">Contact Us</a></li>
+      </ul>
+    </nav>
+  </header>
+    
+
+
+
+
+
+
+    <!-- Rooms Section -->
+    <section id="rooms">
+        <h1>Book a Room</h1>
+        <p>Explore our luxury rooms and make a booking today.</p>
+        
+        <div class="room-list">
+            <!-- Room cards dynamically loaded -->
+        </div>
+
+        <!-- Booking Form -->
+        <div class="reservation-form">
+            <form action="send_room.php" method="post">
+                <!-- Hidden input for room ID -->
+                <input type="hidden" id="room_id" name="room_id">
+                
+                <label for="room-selection">Room</label>
+                <input type="text" id="room-selection" name="room_name" readonly>
+
+                <label for="check-in-date">Check-in Date</label>
+                <input type="date" id="check-in-date" name="check_in_date" required>
+
+                <label for="check-out-date">Check-out Date</label>
+                <input type="date" id="check-out-date" name="check_out_date" required>
+
+                <label for="guest-count">Number of Guests</label>
+                <input type="number" id="guest-count" name="guest_count" min="1" required>
+
+                <label for="contact-info">Contact Information</label>
+                <input type="text" id="contact-info" name="contact-info" placeholder="Enter your contact info" required>
+
+                <p id="price-display"></p>
+                <input type="hidden" id="price" name="price">
+
+                <button type="submit" class="reserve-btn">Book Room</button>
+            </form>
+        </div>
+    </section>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            let today = new Date().toISOString().split("T")[0];
+
+            // Set min date for reservations
+            document.getElementById("check-in-date").setAttribute("min", today);
+
+            // Update checkout date when check-in date is selected
+            document.getElementById("check-in-date").addEventListener("change", function () {
+                let checkInDate = this.value;
+                document.getElementById("check-out-date").setAttribute("min", checkInDate);
+            });
+        });
+    </script>
+
+    <script src="roomjs.js"></script>
+
+</body>
+</html>

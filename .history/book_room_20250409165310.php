@@ -23,7 +23,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Handle reservation creation
     if ($action === 'reserve') {
         // Validate and sanitize inputs
-        $date = $_POST['date'] ?? '';
+        $date1 = $_POST['check-in-date'] ?? '';
+        $date2 = $_POST['check-out-date'] ?? '';
         $time = $_POST['time'] ?? '';
         $party_size = $_POST['party_size'] ?? '';
         $contact_info = $_POST['contact_info'] ?? '';
